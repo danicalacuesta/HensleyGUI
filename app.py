@@ -14,6 +14,7 @@ properties = {
     },
     "Ni": {
         "MW_m": 58.6934,
+        "mol_tot": 100
         # Add other properties of Ni here
     }
 }
@@ -303,16 +304,27 @@ def calculate():
             kg_p = mol_p * Mw_p 
             kg_m= mol_m*MW_m
             #cost requires Cost_p of secondary drop down
-            
             Cost= (kg_p*Cost_p + kg_m*27.8)/(kg_p+kg_m)
-
-
             # Perform calculations or return properties as needed
             return f"Properties of {primary_metal}: Cost= {Cost}"
 
     #screen if you select Pt
     elif primary_metal=="Ni":
-        return "this is the Ni screen"
+        properties_selected = properties.get(primary_metal)
+        properties_2_selected=properties_2.get(secondary_metal)
+        #primary metal properties
+        MW_m = properties_selected["MW_m"]
+        mol_tot = properties_selected["mol_tot"]
+        percent= float(secondary_metal_concentration)/100
+        mol_p= percent*mol_tot
+        mol_m=(1-percent)*mol_tot
+        #secondary metal properties
+        Cost_p= properties_2_selected["Cost_p"]
+        Mw_p= properties_2_selected["MW_p"]
+        kg_p=(mol_p*Mw_p)/1000
+        kg_m = (mol_m * MW_m) /1000
+        Cost = (kg_p * Cost_p + kg_m * 0.0138) / (kg_p + kg_m)
+        return f"Properties of {primary_metal}: Cost= {Cost}"
 
 if __name__ == '__main__':
     app.run(debug=True, port=7007)

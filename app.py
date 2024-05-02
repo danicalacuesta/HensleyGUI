@@ -9,7 +9,7 @@ app = Flask(__name__)
 properties = {
     "Pt": {
         "MW_m": 195.084,
-        "mol_p": 100
+        "mol_tot": 100
         # Add other properties of Pt here
     },
     "Ni": {
@@ -26,7 +26,7 @@ properties_2={
 		"Ed_p" : 0.7,
 		"Oxo_p" : 1.0,
 		"WF_p" : 3.95,
-		"Cost_p" : 11.1,
+		"Cost_p" : 0.0111,
 		"MW_p" : 47.867
         }
         ,
@@ -36,17 +36,17 @@ properties_2={
 		"Ed_p" : 0.4,
 		"Oxo_p" : 0.8,
 		"WF_p" : 4.10,
-		"Cost_p" : 357,
+		"Cost_p" : 0.357,
 		"MW_p" : 50.9415
         },
     'Cr':{
-        "EN_p" : 1.54,
-		"Nelec_p" : 4,
-		"Ed_p" : 0.7,
-		"Oxo_p" : 1.0,
-		"WF_p" : 3.95,
-		"Cost_p" : 11.1,
-		"MW_p" : 47.867
+        'EN_p': 1.66,
+        'Nelec_p': 6,
+        'Ed_p': -0.3,
+        'Oxo_p': 0.6,
+        'WF_p': 4.60,
+        'Cost_p': 0.094,
+        'MW_p': 51.9961
         },
     'Mn':{
         'EN_p': 1.55,
@@ -248,6 +248,32 @@ def calculator():
         <option value="Pt">Pt</option>
         <option value="Ni">Ni</option>
     </select><br><br>
+    <select name="secM" id="secM">
+        <option value="Ti">Ti</option>
+        <option value="V">V</option>
+        <option value="Cr">Cr</option>
+        <option value="Mn">Mn</option>
+        <option value="Fe">Fe</option>
+        <option value="Co">Co</option>
+        <option value="Ni">Ni</option>
+        <option value="Cu">Cu</option>
+        <option value="Zr">Zr</option>
+        <option value="Nb">Nb</option>
+        <option value="Mo">Mo</option>
+        <option value="Tc">Tc</option>
+        <option value="Ru">Ru</option>
+        <option value="Rh">Rh</option>
+        <option value="Pd">Pd</option>
+        <option value="Ag">Ag</option>
+        <option value="Hf">Hf</option>
+        <option value="Ta">Ta</option>
+        <option value="W">W</option>
+        <option value="Re">Re</option>
+        <option value="Os">Os</option>
+        <option value="Ir">Ir</option>
+        <option value="Pt">Pt</option>
+        <option value="V">V</option>
+    </select><br><br>
     <label for="SM_Percent">Enter Secondary Metal Concentration:</label>
     <input type="number" id="SM_Percent" name="SM_Percent"><br><br>
     <input type="submit">
@@ -257,24 +283,32 @@ def calculator():
 @app.route("/calculate", methods=["POST"])
 def calculate():
     primary_metal = request.form.get('priM')  # Use get() to avoid KeyError
+    secondary_metal= request.form.get('secM')
     secondary_metal_concentration = float(request.form.get('SM_Percent'))
 #screen if you select Pt
     if primary_metal=="Pt":
         properties_selected = properties.get(primary_metal)
+        properties_2_selected=properties_2.get(secondary_metal)
         if properties_selected:
             # Retrieve properties based on selected primary metal
             MW_m = properties_selected["MW_m"]
-            mol_p = properties_selected["mol_p"]
+            mol_tot = properties_selected["mol_tot"]
+            #Retrieve properties based on selected secondary metal
+            Cost_p= properties_2_selected["Cost_p"]
+            Mw_p= properties_2_selected["MW_p"]
             # Calculate kg_p based on the input for Secondary Metal Concentration which involves an input
-            kg_p = mol_p * MW_m * secondary_metal_concentration / 1000
             percent= float(secondary_metal_concentration)/100
-            mol_m=(1-percent)/percent*mol_p
-            kg_m= mol_m*MW_m/1000
-
+            mol_p= percent*mol_tot
+            mol_m=(1-percent)*mol_tot
+            kg_p = mol_p * Mw_p 
+            kg_m= mol_m*MW_m
+            #cost requires Cost_p of secondary drop down
+            
+            Cost= (kg_p*Cost_p + kg_m*27.8)/(kg_p+kg_m)
 
 
             # Perform calculations or return properties as needed
-            return f"Properties of {primary_metal}: Mw_m={MW_m}, mol_p={mol_p}, kg_p={kg_p}, kg_m={kg_m}"
+            return f"Properties of {primary_metal}: Cost= {Cost}"
 
     #screen if you select Pt
     elif primary_metal=="Ni":

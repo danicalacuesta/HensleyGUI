@@ -272,8 +272,10 @@ def calculate():
             kg_m= mol_m*MW_m/1000
 
 
+
             # Perform calculations or return properties as needed
-            return f"Properties of {primary_metal}: MW_m={MW_m}, mol_p= {mol_p}, kg_p= {kg_p}"
+            return f"Properties of {primary_metal}: Mw_m={MW_m}, mol_p={mol_p}, kg_p={kg_p}, kg_m={kg_m}"
+
     #screen if you select Pt
     elif primary_metal=="Ni":
         return "this is the Ni screen"

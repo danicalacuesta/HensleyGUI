@@ -1,8 +1,8 @@
 from flask import Flask, request
-#UPDATE: got started, got up to kg_p property of pt
-#To do: finish initializing all of the variables of Pt and Ni
+#UPDATE: got cost of pt
+#To do: get cost of ni
 # make sure all inputs are under eachother and try to make everything centered
-#reach: get started on implementing all of the inputs
+#reach: get started on the performance 
 app = Flask(__name__)
 
 # Define properties of primary metals as dictionaries

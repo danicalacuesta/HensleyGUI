@@ -2,7 +2,7 @@
 ## Running on Local Server
 Terminal line
 ```
-python.py
+python app.py
 ```
 ## Stop local server 
 ```
